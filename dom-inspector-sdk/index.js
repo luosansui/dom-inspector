@@ -36,11 +36,12 @@ export default class DomInspector {
 
     // 生成一个唯一的id
     this.#uniqueId = `frame-${randomToken()}`;
+    // 注册reducers
+    this.#registerReducers([highlight]);
 
     // 创建iframe
     this.#createIframe();
-    // 注册reducers
-    this.#registerReducers([highlight]);
+
     // 注入样式
     this.#injectStyle();
   }
@@ -92,6 +93,9 @@ export default class DomInspector {
 
         // 监听通信，收到消息后使用reducers处理iframe的通信内容
         this.#listenAndCallReducers();
+
+        // 初始化svg的ocean(遮罩层)
+        this.#initSvgOcean();
       },
       { once: true }
     );
@@ -159,6 +163,19 @@ export default class DomInspector {
       // 绑定iframe和uniqueId到reducer
       const reducerWithFrame = reducer.bind(this);
       this.#reducers.push(reducerWithFrame);
+    });
+  }
+
+  // 初始化svg的ocean
+  #initSvgOcean() {
+    const ow = self.innerWidth;
+    const oh = self.innerHeight;
+    this.#channel.postMessage({
+      type: "svgPath",
+      svgPath: {
+        ocean: `M0 0h${ow}v${oh}h-${ow}z`,
+        islands: "",
+      },
     });
   }
 }
