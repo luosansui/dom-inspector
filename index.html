@@ -6,7 +6,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
   <link rel="stylesheet" href="index.css">
-  <link rel="stylesheet" href="./dom-picker/public/top_iframe.css">
 </head>
 
 <body>
@@ -24,8 +23,12 @@
 
   <iframe src="https://translate.google.com" frameborder="0"></iframe>
 
-  <iframe src="./dom-picker/index.html" class="iframe-fullscreen"></iframe>
-
+  <script type="module">
+    import DomInspector from './dom-inspector-sdk/index.js';
+    // 创建实例
+    const inspector = new DomInspector();
+    inspector.init()
+  </script>
 </body>
 
 </html>

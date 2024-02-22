@@ -1,4 +1,76 @@
 /**
+ * 生成随机字符串
+ * @returns {string} 随机字符串
+ */
+export const randomToken = function () {
+  const n = Math.random();
+  return (
+    String.fromCharCode(n * 25 + 97) +
+    Math.floor((0.25 + n * 0.75) * Number.MAX_SAFE_INTEGER)
+      .toString(36)
+      .slice(-8)
+  );
+};
+
+/**
+ * 高亮元素
+ * @param {*} elems 元素列表
+ * @returns {object} 高亮路径
+ */
+export const highlightElements = function (elems) {
+  // To make mouse move handler more efficient
+  if (elems.length === 0) {
+    return;
+  }
+
+  const targetElements = [];
+
+  const ow = self.innerWidth;
+  const oh = self.innerHeight;
+  const islands = [];
+
+  for (const elem of elems) {
+    targetElements.push(elem);
+    const rect = getElementBoundingClientRect(elem);
+    // Ignore offscreen areas
+    if (
+      rect.left > ow ||
+      rect.top > oh ||
+      rect.left + rect.width < 0 ||
+      rect.top + rect.height < 0
+    ) {
+      continue;
+    }
+    islands.push(
+      `M${rect.left} ${rect.top}h${rect.width}v${rect.height}h-${rect.width}z`
+    );
+  }
+
+  const result = {
+    ocean: `M0 0h${ow}v${oh}h-${ow}z`,
+    islands: islands.join(""),
+  };
+
+  return result;
+};
+
+/**
+ * 通过坐标高亮元素
+ * @param {*} mx 相对于视口的 x 坐标
+ * @param {*} my 相对于视口的 y 坐标
+ * @returns {object} 高亮路径
+ */
+export const highlightElementAtPoint = function (
+  mx,
+  my,
+  pickerFrame,
+  pickerUniqueId
+) {
+  const elem = elementFromPoint(mx, my, pickerFrame, pickerUniqueId);
+  return highlightElements(elem ? [elem] : []);
+};
+
+/**
  * 获取元素的尺寸和位置信息
  * @param { HTMLElement } elem 元素
  * @returns { DOMRect } 尺寸和位置信息
@@ -52,10 +124,13 @@ const getElementBoundingClientRect = function (elem) {
   };
 };
 
+/**
+ * 根据坐标获取元素
+ */
 const elementFromPoint = (() => {
   let lastX, lastY;
 
-  return (x, y) => {
+  return (x, y, pickerFrame, pickerUniqueId) => {
     if (x !== undefined) {
       lastX = x;
       lastY = y;
@@ -74,10 +149,7 @@ const elementFromPoint = (() => {
     if (
       elem === null /* to skip following tests */ ||
       elem === document.body ||
-      elem === document.documentElement ||
-      (pickerBootArgs.zap !== true &&
-        noCosmeticFiltering &&
-        resourceURLsFromElement(elem).length === 0)
+      elem === document.documentElement
     ) {
       elem = null;
     }
@@ -86,56 +158,3 @@ const elementFromPoint = (() => {
     return elem;
   };
 })();
-
-export const highlightElements = function (elems) {
-  // To make mouse move handler more efficient
-  if (elems.length === 0) {
-    return;
-  }
-
-  const targetElements = [];
-
-  const ow = self.innerWidth;
-  const oh = self.innerHeight;
-  const islands = [];
-
-  for (const elem of elems) {
-    targetElements.push(elem);
-    const rect = getElementBoundingClientRect(elem);
-    // Ignore offscreen areas
-    if (
-      rect.left > ow ||
-      rect.top > oh ||
-      rect.left + rect.width < 0 ||
-      rect.top + rect.height < 0
-    ) {
-      continue;
-    }
-    islands.push(
-      `M${rect.left} ${rect.top}h${rect.width}v${rect.height}h-${rect.width}z`
-    );
-  }
-
-  const result = {
-    ocean: `M0 0h${ow}v${oh}h-${ow}z`,
-    islands: islands.join(""),
-  };
-
-  return result;
-};
-
-export const highlightElementAtPoint = function (mx, my) {
-  const elem = elementFromPoint(mx, my);
-  console.log("elem", elem);
-  highlightElements(elem ? [elem] : []);
-};
-
-export const randomToken = () => {
-  const n = Math.random();
-  return (
-    String.fromCharCode(n * 25 + 97) +
-    Math.floor((0.25 + n * 0.75) * Number.MAX_SAFE_INTEGER)
-      .toString(36)
-      .slice(-8)
-  );
-};

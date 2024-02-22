@@ -1,4 +1,28 @@
-import { highlightElementAtPoint } from "./utils.js";
+import Channel from "./Channel/index.js";
+import { $stor } from "../utils/dom.js";
+
+const channel = new Channel();
+
+const svgRoot = $stor("svg");
+const svgOcean = svgRoot.children[0];
+const svgIslands = svgRoot.children[1];
+const NoPaths = "M0 0";
+
+channel.onMessage((event) => {
+  switch (event.data.type) {
+    case "svgPath": {
+      const { svgPath } = event.data;
+      if (!svgPath) {
+        return;
+      }
+      let { ocean, islands } = svgPath;
+      ocean += islands;
+      svgOcean.setAttribute("d", ocean);
+      svgIslands.setAttribute("d", islands || NoPaths);
+      break;
+    }
+  }
+});
 
 const svgListening = (() => {
   let on = false;
@@ -8,8 +32,11 @@ const svgListening = (() => {
 
   const onTimer = () => {
     timer = undefined;
-    const result = highlightElementAtPoint(mx, my);
-    console.log(result);
+    channel.postMessage({
+      type: "highlightElementAtPoint",
+      mx,
+      my,
+    });
   };
 
   const onHover = (ev) => {

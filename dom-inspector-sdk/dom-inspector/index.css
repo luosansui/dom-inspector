@@ -1,5 +1,5 @@
-html#dom-picker,
-#dom-picker body {
+html#dom-inspector,
+#dom-inspector body {
     background: transparent;
     cursor: not-allowed;
     height: 100vh;
@@ -8,11 +8,11 @@ html#dom-picker,
     width: 100vw;
 }
 
-#dom-picker :focus {
+#dom-inspector :focus {
     outline: none;
 }
 
-#dom-picker svg {
+#dom-inspector svg {
     cursor: crosshair;
     box-sizing: border-box;
     height: 100%;
@@ -21,26 +21,26 @@ html#dom-picker,
     top: 0;
     width: 100%;
 }
-#dom-picker.paused svg {
+#dom-inspector.paused svg {
     cursor: not-allowed;
 }
-#dom-picker svg > path:first-child {
+#dom-inspector svg > path:first-child {
     fill: rgba(0,0,0,0.5);
     fill-rule: evenodd;
 }
-#dom-picker svg > path + path {
+#dom-inspector svg > path + path {
     stroke: #F00;
     stroke-width: 0.5px;
     fill: rgba(255,63,63,0.20);
 }
-#dom-picker.zap svg > path + path {
+#dom-inspector.zap svg > path + path {
     stroke: #FF0;
     stroke-width: 0.5px;
     fill: rgba(255,255,63,0.20);
 }
-#dom-picker.preview svg > path {
+#dom-inspector.preview svg > path {
     fill: rgba(0,0,0,0.10);
 }
-#dom-picker.preview svg > path + path {
+#dom-inspector.preview svg > path + path {
     stroke: none;
 }
