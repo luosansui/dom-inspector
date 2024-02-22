@@ -1,0 +1,46 @@
+html#dom-picker,
+#dom-picker body {
+    background: transparent;
+    cursor: not-allowed;
+    height: 100vh;
+    margin: 0;
+    overflow: hidden;
+    width: 100vw;
+}
+
+#dom-picker :focus {
+    outline: none;
+}
+
+#dom-picker svg {
+    cursor: crosshair;
+    box-sizing: border-box;
+    height: 100%;
+    left: 0;
+    position: absolute;
+    top: 0;
+    width: 100%;
+}
+#dom-picker.paused svg {
+    cursor: not-allowed;
+}
+#dom-picker svg > path:first-child {
+    fill: rgba(0,0,0,0.5);
+    fill-rule: evenodd;
+}
+#dom-picker svg > path + path {
+    stroke: #F00;
+    stroke-width: 0.5px;
+    fill: rgba(255,63,63,0.20);
+}
+#dom-picker.zap svg > path + path {
+    stroke: #FF0;
+    stroke-width: 0.5px;
+    fill: rgba(255,255,63,0.20);
+}
+#dom-picker.preview svg > path {
+    fill: rgba(0,0,0,0.10);
+}
+#dom-picker.preview svg > path + path {
+    stroke: none;
+}

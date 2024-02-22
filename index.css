@@ -1,0 +1,32 @@
+/* 第一个div */
+div:nth-of-type(1) {
+  width: 50px;
+  height: 50px;
+  background-color: red;
+}
+
+/* 第二个div */
+div:nth-of-type(2) {
+  width: 100px;
+  height: 100px;
+  background-color: blue;
+}
+
+/* 第三个div */
+div:nth-of-type(3) {
+  width: 150px;
+  height: 150px;
+  background-color: green;
+}
+/* 第四个div */
+div:nth-of-type(4) {
+  width: 200px;
+  height: 200px;
+  background-color: yellow;
+}
+/* 第五个div */
+div:nth-of-type(5) {
+  width: 250px;
+  height: 250px;
+  background-color: pink;
+}
