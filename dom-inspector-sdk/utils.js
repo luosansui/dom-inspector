@@ -18,19 +18,20 @@ export const randomToken = function () {
  * @returns {object} 高亮路径
  */
 export const highlightElements = function (elems) {
+  const targetElements = [...elems];
   // To make mouse move handler more efficient
   if (elems.length === 0) {
-    return;
+    return {
+      svgPath: null,
+      targetElements: [],
+    };
   }
-
-  const targetElements = [];
 
   const ow = self.innerWidth;
   const oh = self.innerHeight;
   const islands = [];
 
   for (const elem of elems) {
-    targetElements.push(elem);
     const rect = getElementBoundingClientRect(elem);
     // Ignore offscreen areas
     if (
@@ -46,12 +47,15 @@ export const highlightElements = function (elems) {
     );
   }
 
-  const result = {
+  const svgPath = {
     ocean: `M0 0h${ow}v${oh}h-${ow}z`,
     islands: islands.join(""),
   };
 
-  return result;
+  return {
+    svgPath,
+    targetElements,
+  };
 };
 
 /**

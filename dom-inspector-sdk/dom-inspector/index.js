@@ -15,9 +15,6 @@ channel.onMessage((event) => {
   switch (event.data.type) {
     case "svgPath": {
       const { svgPath } = event.data;
-      if (!svgPath) {
-        return;
-      }
       let { ocean, islands } = svgPath;
       ocean += islands;
       svgOcean.setAttribute("d", ocean);

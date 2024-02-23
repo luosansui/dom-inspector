@@ -18,4 +18,8 @@ export default class Channel {
   onMessageError(callback) {
     this.#port.onmessageerror = callback;
   }
+
+  close() {
+    this.#port.close();
+  }
 }

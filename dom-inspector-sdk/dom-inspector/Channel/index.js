@@ -5,30 +5,32 @@
  */
 export default class Channel {
   #port = null;
+
   #onmessage = () => {};
   #onmessageerror = () => {};
+
+  #handleMessageReceived = (event) => {
+    if (!event.data && event.ports.length) {
+      event.stopImmediatePropagation();
+    }
+
+    console.log("Get Port!!!", event.ports);
+    if (event.ports.length) {
+      this.#port = event.ports[0];
+
+      this.#port.onmessage = (...args) => {
+        this.#onmessage(...args);
+      };
+      this.#port.onmessageerror = (...args) => {
+        this.#onmessageerror(...args);
+      };
+    }
+  };
+
   constructor() {
-    self.addEventListener(
-      "message",
-      (event) => {
-        if (!event.data && event.ports.length) {
-          event.stopImmediatePropagation();
-        }
-
-        console.log("Get Port!!!", event.ports);
-        if (event.ports.length) {
-          this.#port = event.ports[0];
-
-          this.#port.onmessage = (...args) => {
-            this.#onmessage(...args);
-          };
-          this.#port.onmessageerror = (...args) => {
-            this.#onmessageerror(...args);
-          };
-        }
-      },
-      { once: true }
-    );
+    self.addEventListener("message", this.#handleMessageReceived, {
+      once: true,
+    });
   }
 
   postMessage(message) {
@@ -44,5 +46,9 @@ export default class Channel {
 
   onMessageError(callback) {
     this.#onmessageerror = callback;
+  }
+
+  close() {
+    this.#port?.close();
   }
 }

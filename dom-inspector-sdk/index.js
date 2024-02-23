@@ -7,13 +7,17 @@
 import { randomToken } from "./utils.js";
 import highlight from "./reducers/highlight/index.js";
 import Channel from "./Channel/index.js";
+import { highlightElements } from "./utils.js";
+import ViewChange from "./ViewChange/index.js";
 
 export default class DomInspector {
-  #iframe = null;
-  #styleTag = null;
-  #uniqueId = "";
-  #channel = null;
-  #reducers = [];
+  #iframe = null; // iframe
+  #styleTag = null; // 样式标签
+  #uniqueId = ""; // 唯一id
+  #channel = null; // 通信通道
+  #reducers = []; // 处理iframe通信的reducers
+  #targetElements = []; // 保存目标元素
+  #viewChange = new ViewChange(); // 视口变化监听
 
   getIframe() {
     return this.#iframe;
@@ -25,6 +29,22 @@ export default class DomInspector {
 
   getChannel() {
     return this.#channel;
+  }
+
+  pushTargetElements(elem) {
+    if (Array.isArray(elem)) {
+      this.#targetElements = this.#targetElements.concat(elem);
+    } else {
+      this.#targetElements.push(elem);
+    }
+  }
+
+  setTargetElements(elem) {
+    if (!Array.isArray(elem)) {
+      throw new Error("Invalid target elements");
+    }
+    this.#targetElements = elem;
+    console.log("elem", elem);
   }
 
   // Initialize DomPicker
@@ -48,15 +68,24 @@ export default class DomInspector {
 
   // Destroy DomPicker
   destroy() {
-    if (this.#iframe) {
-      document.body.removeChild(this.#iframe);
-      this.#iframe = null;
-    }
-    if (this.#styleTag) {
-      document.head.removeChild(this.#styleTag);
-      this.#styleTag = null;
-    }
+    // 移除iframe
+    document.body.removeChild(this.#iframe);
+    this.#iframe = null;
+    // 移除样式
+    document.head.removeChild(this.#styleTag);
+    this.#styleTag = null;
+    // 清空reducers
+    this.#reducers = [];
+    // 清空目标元素
+    this.#targetElements = [];
+    // 关闭通信通道
+    this.#channel.close();
+    this.#channel = null;
+    // 清空uniqueId
     this.#uniqueId = "";
+    // 停止视口变化监听
+    this.#viewChange.stop();
+    this.ViewChange = null;
   }
 
   // Verify token
@@ -96,9 +125,31 @@ export default class DomInspector {
 
         // 初始化svg的ocean(遮罩层)
         this.#initSvgOcean();
+
+        // 绑定视口变化监听事件
+        this.#viewChange
+          .onCallback(() => {
+            const { svgPath } = highlightElements(this.#targetElements);
+            if (!svgPath) {
+              return;
+            }
+            // 将svgPath传递给iframe
+            this.#channel.postMessage({
+              type: "svgPath",
+              svgPath,
+            });
+          })
+          .start();
       },
       { once: true }
     );
+  }
+
+  // Register reducers
+  #registerReducers(reducers) {
+    reducers.forEach((reducer) => {
+      this.#reducers.push(reducer.bind(this));
+    });
   }
 
   // Call reducers
@@ -155,15 +206,6 @@ export default class DomInspector {
     this.#styleTag = document.createElement("style");
     this.#styleTag.innerHTML = pickerCSS;
     document.head.appendChild(this.#styleTag);
-  }
-
-  // 注册reducers
-  #registerReducers(reducers) {
-    reducers.forEach((reducer) => {
-      // 绑定iframe和uniqueId到reducer
-      const reducerWithFrame = reducer.bind(this);
-      this.#reducers.push(reducerWithFrame);
-    });
   }
 
   // 初始化svg的ocean

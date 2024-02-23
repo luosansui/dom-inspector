@@ -13,4 +13,8 @@ export default class Inspector {
   pause() {
     this.#SvgListener.toggle(false);
   }
+  destroy() {
+    this.pause();
+    this.#channel.close();
+  }
 }
