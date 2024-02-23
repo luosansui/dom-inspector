@@ -19,16 +19,9 @@ export const randomToken = function () {
  */
 export const highlightElements = function (elems) {
   const targetElements = [...elems];
-  // To make mouse move handler more efficient
-  if (elems.length === 0) {
-    return {
-      svgPath: null,
-      targetElements: [],
-    };
-  }
-
   const ow = self.innerWidth;
   const oh = self.innerHeight;
+  const ocean = `M0 0h${ow}v${oh}h-${ow}z`;
   const islands = [];
 
   for (const elem of elems) {
@@ -47,13 +40,11 @@ export const highlightElements = function (elems) {
     );
   }
 
-  const svgPath = {
-    ocean: `M0 0h${ow}v${oh}h-${ow}z`,
-    islands: islands.join(""),
-  };
-
   return {
-    svgPath,
+    svgPath: {
+      ocean,
+      islands: islands.join(""),
+    },
     targetElements,
   };
 };
@@ -71,7 +62,10 @@ export const highlightElementAtPoint = function (
   pickerUniqueId
 ) {
   const elem = elementFromPoint(mx, my, pickerFrame, pickerUniqueId);
-  return highlightElements(elem ? [elem] : []);
+  if (!elem) {
+    return { svgPath: null, targetElements: [] };
+  }
+  return highlightElements([elem]);
 };
 
 /**

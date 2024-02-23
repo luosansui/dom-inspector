@@ -12,6 +12,7 @@ export default function (type, message) {
         frame,
         uniqueId
       );
+      // 如果没有选中元素，就保持原样
       if (!svgPath) {
         return;
       }

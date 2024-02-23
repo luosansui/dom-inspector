@@ -209,14 +209,10 @@ export default class DomInspector {
 
   // 初始化svg的ocean
   #initSvgOcean() {
-    const ow = self.innerWidth;
-    const oh = self.innerHeight;
+    const { svgPath } = highlightElements([]);
     this.#channel.postMessage({
       type: "svgPath",
-      svgPath: {
-        ocean: `M0 0h${ow}v${oh}h-${ow}z`,
-        islands: "",
-      },
+      svgPath,
     });
   }
 }
