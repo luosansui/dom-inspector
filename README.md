@@ -1,4 +1,4 @@
-# An DOM Inspector extracted from uBlock Origin
+# A DOM Inspector extracted from uBlock Origin
 
 ## The Demo
 
