@@ -19,6 +19,6 @@ export default class Inspector {
   };
 
   destroy = () => {
-    this.#SvgListener.stop();
+    this.#SvgListener.stopAllListen();
   };
 }

@@ -84,7 +84,7 @@ export default class SvgListener {
     }
   };
 
-  stop = () => {
+  stopAllListen = () => {
     this.toggleClickListen(false);
     this.toggleMousemoveListen(false);
   };
