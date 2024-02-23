@@ -4,10 +4,10 @@
  * 同时需要为iframe注入样式
  * 将其封装为一个类，方便使用
  */
-import { randomToken } from "./utils.js";
+import { randomToken } from "./utils/element.js";
 import highlight from "./reducers/highlight/index.js";
 import Channel from "./Channel/index.js";
-import { highlightElements } from "./utils.js";
+import { highlightElements } from "./utils/element.js";
 import ViewChangeListener from "./ViewChangeListener/index.js";
 
 export default class DomInspector {

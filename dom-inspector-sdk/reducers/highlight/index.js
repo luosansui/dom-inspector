@@ -1,4 +1,4 @@
-import { highlightElementAtPoint } from "../../utils.js";
+import { highlightElementAtPoint } from "../../utils/element.js";
 
 export default function (type, message) {
   switch (type) {
