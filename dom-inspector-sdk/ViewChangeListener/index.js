@@ -9,7 +9,7 @@
     在uninstall方法中销毁
     同时它具有一个onCallback方法，定义了一个回调函数，用于处理视口变化事件
  */
-export default class ViewChange {
+export default class ViewChangeListener {
   #viewportChangedCallback = () => {};
 
   constructor(callback) {

@@ -1,20 +1,24 @@
 import SvgListener from "./SvgListener/index.js";
 
 export default class Inspector {
-  #SvgListener = null;
   #channel = null;
+  #SvgListener = null;
   constructor(channel) {
     this.#channel = channel;
     this.#SvgListener = new SvgListener(channel);
   }
-  start() {
-    this.#SvgListener.toggle(true);
-  }
-  pause() {
-    this.#SvgListener.toggle(false);
-  }
-  destroy() {
-    this.pause();
-    this.#channel.close();
-  }
+
+  startListen = () => {
+    this.#SvgListener.toggleMousemoveListen(true);
+    this.#SvgListener.toggleClickListen(true);
+  };
+
+  stopListen = () => {
+    this.#SvgListener.toggleMousemoveListen(false);
+    this.#SvgListener.toggleClickListen(false);
+  };
+
+  destroy = () => {
+    this.#SvgListener.stop();
+  };
 }

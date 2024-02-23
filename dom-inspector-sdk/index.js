@@ -8,7 +8,7 @@ import { randomToken } from "./utils.js";
 import highlight from "./reducers/highlight/index.js";
 import Channel from "./Channel/index.js";
 import { highlightElements } from "./utils.js";
-import ViewChange from "./ViewChange/index.js";
+import ViewChangeListener from "./ViewChangeListener/index.js";
 
 export default class DomInspector {
   #iframe = null; // iframe
@@ -17,7 +17,7 @@ export default class DomInspector {
   #channel = null; // 通信通道
   #reducers = []; // 处理iframe通信的reducers
   #targetElements = []; // 保存目标元素
-  #viewChange = new ViewChange(); // 视口变化监听
+  #ViewChangeListener = new ViewChangeListener(); // 视口变化监听
 
   getIframe() {
     return this.#iframe;
@@ -44,7 +44,6 @@ export default class DomInspector {
       throw new Error("Invalid target elements");
     }
     this.#targetElements = elem;
-    console.log("elem", elem);
   }
 
   // Initialize DomPicker
@@ -84,7 +83,7 @@ export default class DomInspector {
     // 清空uniqueId
     this.#uniqueId = "";
     // 停止视口变化监听
-    this.#viewChange.stop();
+    this.#ViewChangeListener.stop();
     this.ViewChange = null;
   }
 
@@ -127,7 +126,7 @@ export default class DomInspector {
         this.#initSvgOcean();
 
         // 绑定视口变化监听事件
-        this.#viewChange
+        this.#ViewChangeListener
           .onCallback(() => {
             const { svgPath } = highlightElements(this.#targetElements);
             if (!svgPath) {

@@ -1,48 +1,91 @@
 export default class SvgListener {
-  #on = false;
-  #timer = undefined;
-  #mx = 0;
-  #my = 0;
+  #mousemove = {
+    on: false,
+    timer: undefined,
+    mx: 0,
+    my: 0,
+  };
+
+  #click = {
+    on: false,
+  };
+
   #channel = null;
   #abortController = new AbortController();
+
   constructor(channel) {
     this.#channel = channel;
   }
-
-  #onTimer() {
-    this.#timer = undefined;
+  /**----------------------mousemove------------------------------ */
+  #onMousemoveTimer = () => {
+    this.#mousemove.timer = undefined;
     this.#channel.postMessage({
       type: "highlightElementAtPoint",
-      mx: this.#mx,
-      my: this.#my,
+      mx: this.#mousemove.mx,
+      my: this.#mousemove.my,
     });
-  }
+  };
 
-  #onHover(ev) {
-    this.#mx = ev.clientX;
-    this.#my = ev.clientY;
-    if (this.#timer === undefined) {
-      this.#timer = self.requestAnimationFrame(this.#onTimer.bind(this));
+  #onMousemoveHover = (ev) => {
+    this.#mousemove.mx = ev.clientX;
+    this.#mousemove.my = ev.clientY;
+    if (this.#mousemove.timer === undefined) {
+      this.#mousemove.timer = self.requestAnimationFrame(
+        this.#onMousemoveTimer
+      );
     }
-  }
+  };
 
-  toggle(state) {
-    if (state === this.#on) {
+  toggleMousemoveListen = (state) => {
+    // 如果状态没有改变，直接返回
+
+    if (state === this.#mousemove.on) {
       return;
     }
-    this.#on = state;
-    if (this.#on) {
-      document.addEventListener("mousemove", this.#onHover.bind(this), {
+    // 如果状态改变，更新状态（state为undefined时，取反）
+    this.#mousemove.on = state === undefined ? !this.#mousemove.on : state;
+
+    if (this.#mousemove.on) {
+      self.addEventListener("mousemove", this.#onMousemoveHover, {
         passive: true,
         signal: this.#abortController.signal,
       });
       return;
     }
+
     this.#abortController.abort();
-    if (this.#timer !== undefined) {
-      self.cancelAnimationFrame(this.#timer);
-      this.#timer = undefined;
+    if (this.#mousemove.timer !== undefined) {
+      self.cancelAnimationFrame(this.#mousemove.timer);
+      this.#mousemove.timer = undefined;
     }
     this.#abortController = new AbortController();
-  }
+  };
+
+  /**----------------------click------------------------------ */
+
+  #handleClick = () => {
+    this.toggleMousemoveListen();
+  };
+
+  toggleClickListen = (state) => {
+    if (state === this.#click.on) {
+      return;
+    }
+    this.#click.on = state === undefined ? !this.#click.on : state;
+
+    if (this.#click.on) {
+      self.addEventListener("click", this.#handleClick, {
+        passive: true,
+      });
+    } else {
+      self.removeEventListener("click", this.#handleClick, {
+        passive: true,
+      });
+    }
+  };
+
+  stop = () => {
+    this.toggleClickListen(false);
+    this.toggleMousemoveListen(false);
+  };
 }

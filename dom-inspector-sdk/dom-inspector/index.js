@@ -26,4 +26,4 @@ channel.onMessage((event) => {
 
 const inspector = new Inspector(channel);
 // 开始监听鼠标移动
-inspector.start();
+inspector.startListen();
